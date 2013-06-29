@@ -17,6 +17,7 @@ func TestEditDistance(t *testing.T) {
 		testCase{"hello", "helpo", 1},
 		testCase{"llo", "hello", 2},
 		testCase{"cubby", "bear", 5},
+		testCase{"", "", 0},
 		testCase{"foo", "bar", 3}}		
 
 	for _, test := range tests {
