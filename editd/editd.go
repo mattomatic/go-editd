@@ -62,26 +62,11 @@ func makeCells(length int) [][]cell {
 	return cells
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func max(a, b int) int {
 	if a > b {
 		return a
 	}
 	return b
-}
-
-func trim(s string) string {
-	return s[:len(s)-1]
-}
-
-func last(s string) rune {
-	return rune(s[len(s)-1])
 }
 
 func insCost(r rune) int {
