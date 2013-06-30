@@ -5,6 +5,11 @@ type cell struct {
 	parent action
 }
 
+func (c *cell) set(cost int, parent action) {
+    c.cost = cost
+    c.parent = parent
+}
+
 type action string
 
 const (
@@ -21,13 +26,11 @@ func EditDistance(s1, s2 string) int {
 
 func editd(s1, s2 string, cells [][]cell) int {
     for x := 0; x < len(s1); x++ {
-        cells[x][0].cost = x
-        cells[x][0].parent = Deletion
+        cells[x][0].set(x, Deletion)
     }
 
     for x := 0; x < len(s2); x++ {
-        cells[0][x].cost = x
-        cells[0][x].parent = Insertion
+        cells[0][x].set(x, Insertion)
     }
 	
 	for i := 1; i < len(s1); i++ {
@@ -37,14 +40,11 @@ func editd(s1, s2 string, cells [][]cell) int {
 			del := cells[i-1][j].cost + delCost(rune(s1[i]))
 
 			if sub <= ins && sub <= del {
-				cells[i][j].cost = sub
-				cells[i][j].parent = Substitution
+			    cells[i][j].set(sub, Substitution)
 			} else if ins <= sub && ins <= del {
-				cells[i][j].cost = ins
-				cells[i][j].parent = Insertion
+			    cells[i][j].set(ins, Insertion)
 			} else {
-				cells[i][j].cost = del
-				cells[i][j].parent = Deletion
+			    cells[i][j].set(del, Deletion)
 			}
 		}
 	}
