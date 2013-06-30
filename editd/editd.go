@@ -1,26 +1,76 @@
 package editd
 
-func EditDistance(s1, s2 string) int {
-	return editd(s1, s2)
+type cell struct {
+	cost   int
+	parent action
 }
 
-func editd(s1, s2 string) int {
-	if len(s1) == 0 {
-		return len(s2) * insCost(' ')
-	}
-	if len(s2) == 0 {
-		return len(s1) * delCost(' ')
+type action string
+
+const (
+	Substitution action = "Substitution"
+	Insertion    action = "Insertion"
+	Deletion     action = "Deletion"
+)
+
+func EditDistance(s1, s2 string) int {
+	length := max(len(s1), len(s2))
+	cells := makeCells(length + 1)
+	return editd(" "+s1, " "+s2, cells)
+}
+
+func editd(s1, s2 string, cells [][]cell) int {
+    for x := 0; x < len(s1); x++ {
+        cells[x][0].cost = x
+        cells[x][0].parent = Deletion
+    }
+
+    for x := 0; x < len(s2); x++ {
+        cells[0][x].cost = x
+        cells[0][x].parent = Insertion
+    }
+	
+	for i := 1; i < len(s1); i++ {
+		for j := 1; j < len(s2); j++ {
+			sub := cells[i-1][j-1].cost + subCost(rune(s1[i]), rune(s2[j]))
+			ins := cells[i][j-1].cost + insCost(rune(s2[j]))
+			del := cells[i-1][j].cost + delCost(rune(s1[i]))
+
+			if sub <= ins && sub <= del {
+				cells[i][j].cost = sub
+				cells[i][j].parent = Substitution
+			} else if ins <= sub && ins <= del {
+				cells[i][j].cost = ins
+				cells[i][j].parent = Insertion
+			} else {
+				cells[i][j].cost = del
+				cells[i][j].parent = Deletion
+			}
+		}
 	}
 
-	sub := editd(trim(s1), trim(s2)) + subCost(last(s1), last(s2))
-	ins := editd(s1, trim(s2)) + insCost(last(s2))
-	del := editd(trim(s1), s2) + delCost(last(s1))
+	return cells[len(s1) - 1][len(s2) - 1].cost
+}
 
-	return min(sub, min(ins, del))
+func makeCells(length int) [][]cell {
+	cells := make([][]cell, length)
+
+	for i, _ := range cells {
+		cells[i] = make([]cell, length)
+	}
+
+	return cells
 }
 
 func min(a, b int) int {
 	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b int) int {
+	if a > b {
 		return a
 	}
 	return b

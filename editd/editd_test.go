@@ -2,6 +2,7 @@ package editd
 
 import (
 	"testing"
+	"fmt"
 )
 
 type testCase struct {
@@ -18,13 +19,15 @@ func TestEditDistance(t *testing.T) {
 		testCase{"llo", "hello", 2},
 		testCase{"cubby", "bear", 5},
 		testCase{"", "", 0},
-		testCase{"foo", "bar", 3}}		
+		testCase{"hiphoppopotomus", "rhymenoceros", 12},
+		testCase{"foo", "bar", 3}}
 
 	for _, test := range tests {
 		distance := EditDistance(test.s1, test.s2)
 
 		if distance != test.distance {
-			t.Error()
+		    message := fmt.Sprintf("%s->%s have: %d want: %d", test.s1, test.s2, distance, test.distance)
+			t.Error(message)
 		}
 	}
 }
