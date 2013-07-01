@@ -1,8 +1,8 @@
 package editd
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 type testCase struct {
@@ -26,7 +26,7 @@ func TestEditDistance(t *testing.T) {
 		distance := EditDistance(test.s1, test.s2)
 
 		if distance != test.distance {
-		    message := fmt.Sprintf("%s->%s have: %d want: %d", test.s1, test.s2, distance, test.distance)
+			message := fmt.Sprintf("%s->%s have: %d want: %d", test.s1, test.s2, distance, test.distance)
 			t.Error(message)
 		}
 	}

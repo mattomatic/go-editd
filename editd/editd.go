@@ -3,19 +3,21 @@ package editd
 type cell struct {
 	cost   int
 	parent action
+	letter rune
 }
 
-func (c *cell) set(cost int, parent action) {
-    c.cost = cost
-    c.parent = parent
+func (c *cell) set(cost int, parent action, letter rune) {
+	c.cost = cost
+	c.parent = parent
+	c.letter = letter
 }
 
 type action string
 
 const (
-	Substitution action = "Substitution"
-	Insertion    action = "Insertion"
-	Deletion     action = "Deletion"
+	Substitute action = "Substitute"
+	Insert     action = "Insert"
+	Delete     action = "Delete"
 )
 
 func EditDistance(s1, s2 string) int {
@@ -25,31 +27,31 @@ func EditDistance(s1, s2 string) int {
 }
 
 func editd(s1, s2 string, cells [][]cell) int {
-    for x := 0; x < len(s1); x++ {
-        cells[x][0].set(x, Deletion)
-    }
+	for x := 0; x < len(s1); x++ {
+		cells[x][0].set(x, Delete, rune(s1[x]))
+	}
 
-    for x := 0; x < len(s2); x++ {
-        cells[0][x].set(x, Insertion)
-    }
-	
-	for i := 1; i < len(s1); i++ {
-		for j := 1; j < len(s2); j++ {
-			sub := cells[i-1][j-1].cost + subCost(rune(s1[i]), rune(s2[j]))
-			ins := cells[i][j-1].cost + insCost(rune(s2[j]))
-			del := cells[i-1][j].cost + delCost(rune(s1[i]))
+	for x := 0; x < len(s2); x++ {
+		cells[0][x].set(x, Insert, rune(s2[x]))
+	}
+
+	for r := 1; r < len(s1); r++ {
+		for c := 1; c < len(s2); c++ {
+			sub := cells[r-1][c-1].cost + subCost(rune(s1[r]), rune(s2[c]))
+			ins := cells[r][c-1].cost + insCost(rune(s2[c]))
+			del := cells[r-1][c].cost + delCost(rune(s1[r]))
 
 			if sub <= ins && sub <= del {
-			    cells[i][j].set(sub, Substitution)
+				cells[r][c].set(sub, Substitute, rune(s1[r]))
 			} else if ins <= sub && ins <= del {
-			    cells[i][j].set(ins, Insertion)
+				cells[r][c].set(ins, Insert, rune(s2[c]))
 			} else {
-			    cells[i][j].set(del, Deletion)
+				cells[r][c].set(del, Delete, rune(s1[r]))
 			}
 		}
 	}
 
-	return cells[len(s1) - 1][len(s2) - 1].cost
+	return cells[len(s1)-1][len(s2)-1].cost
 }
 
 func makeCells(length int) [][]cell {
